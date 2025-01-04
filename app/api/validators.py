@@ -15,7 +15,7 @@ async def check_charity_project_exists(
     if charity is None:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail='Сбор не найден!'
+            detail="Сбор не найден!"
         )
     return charity
 
@@ -31,7 +31,7 @@ async def check_charity_name_is_unique(
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=(
-                'Проект с таким именем уже существует!'
+                "Проект с таким именем уже существует!"
             )
         )
 
@@ -43,7 +43,7 @@ def check_charity_is_open(
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=(
-                'Закрытый проект нельзя редактировать!'
+                "Закрытый проект нельзя редактировать!"
             )
         )
 
@@ -56,8 +56,8 @@ def check_charity_new_ammout_ge_invested(
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=(
-                'Нелья установить значение '
-                'full_amount меньше уже вложенной суммы.'
+                "Нелья установить значение "
+                "full_amount меньше уже вложенной суммы."
             )
         )
 
@@ -73,8 +73,8 @@ async def check_project_not_invested_yet(
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=(
-                'Нелья установить значение '
-                'full_amount меньше уже вложенной суммы.'
+                "Нелья установить значение "
+                "full_amount меньше уже вложенной суммы."
             )
         )
     return charity

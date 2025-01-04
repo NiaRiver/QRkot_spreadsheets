@@ -15,7 +15,7 @@ router = APIRouter()
 
 @router.post(
     "/",
-    response_model=list[Any],
+    response_model=dict[str, Any],
     dependencies=[Depends(current_superuser)]
 )
 async def get_report(
@@ -27,11 +27,18 @@ async def get_report(
     reservations = await charity_projects_crud.get_projects_by_completion_rate(
         limit, offset, session=session
     )
-    spreadsheetid = await google_api.spreadsheets_create(wrapper_services)
-    await google_api.set_user_permissions(spreadsheetid, wrapper_services)
+    spreadsheet_id, spreadsheet_url = await google_api.spreadsheets_create(
+        wrapper_services
+    )
+    await google_api.set_user_permissions(spreadsheet_id, wrapper_services)
     updated_cells = await google_api.spreadsheets_update_value(
-        spreadsheetid,
+        spreadsheet_id,
         reservations,
         wrapper_services
     )
-    return updated_cells
+    response = dict(
+        spreadsheet_id=spreadsheet_id,
+        spreadsheet_url=spreadsheet_url,
+        updates=updated_cells
+    )
+    return response

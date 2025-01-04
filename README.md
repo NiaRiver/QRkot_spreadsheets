@@ -37,13 +37,13 @@ The QRKot Foundation collects donations for various targeted projects aimed at s
 - FastAPI Users
 - Pydantic
 - JWT authentication
+- AIOGoogle
 
 ## Installation
-
 1. Clone the repository:
 ```bash
-git clone git@github.com:NiaRiver/cat_charity_fund.git && \
-cd cat_charity_fund
+git clone git@github.com:NiaRiver/QRkot_spreadsheets.git && \
+cd QRkot_spreadsheets
 ```
 
 2. Create and activate virtual environment:
@@ -79,22 +79,6 @@ uvicorn app.main:app --reload
 3. Access the API documentation:
 - [Swagger UI Documentation](http://localhost:8000/docs)
 - [ReDoc Documentation](http://localhost:8000/redoc)
-
-## Project Structure
-
-```
-app/
-├── core/
-│   ├── config.py        # Application settings
-│   ├── db.py           # Database configuration
-│   └── user.py         # User management
-├── crud/               # CRUD operations
-├── models/             # Database models
-├── schemas/            # Pydantic models
-├── api/                # API endpoints
-├── services/          # Business logic
-└── main.py            # Application entry point
-```
 
 ## API Endpoints
 

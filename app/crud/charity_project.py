@@ -21,7 +21,7 @@ class CRUDCharityProject(CRUDBase):
     async def get_projects_by_completion_rate(
         self,
         limit: int = 10,
-        offset: int = 0, *
+        offset: int = 0, *,
         session: AsyncSession
     ) -> list[CharityProject]:
         projects = await session.execute(
