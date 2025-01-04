@@ -1,7 +1,7 @@
 from typing import Any
 
 from aiogoogle import Aiogoogle
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.db import get_async_session
@@ -31,14 +31,15 @@ async def get_report(
         wrapper_services
     )
     await google_api.set_user_permissions(spreadsheet_id, wrapper_services)
-    updated_cells = await google_api.spreadsheets_update_value(
-        spreadsheet_id,
-        reservations,
-        wrapper_services
-    )
-    response = dict(
-        spreadsheet_id=spreadsheet_id,
-        spreadsheet_url=spreadsheet_url,
-        updates=updated_cells
-    )
-    return response
+    try:
+        await google_api.spreadsheets_update_value(
+            spreadsheet_id,
+            reservations,
+            wrapper_services
+        )
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_412_PRECONDITION_FAILED,
+            detail=f"Возникла ошибка: {e}"
+        )
+    return dict(spreadsheet_id=spreadsheet_id, spreadsheet_url=spreadsheet_url)

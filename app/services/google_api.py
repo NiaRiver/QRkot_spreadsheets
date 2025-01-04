@@ -3,7 +3,6 @@ from datetime import datetime as dt
 from datetime import timedelta as delta
 
 from aiogoogle import Aiogoogle
-from fastapi import HTTPException, status
 
 from app.core.config import settings
 
@@ -37,7 +36,7 @@ TABLE_HEADER = [
 async def spreadsheets_create(wrapper_services: Aiogoogle) -> str:
     now_dt = dt.now().strftime(FORMAT)
     service = await wrapper_services.discover("sheets", "v4")
-    spreadsheet_body = SPREADSHEET_BODY.copy()
+    spreadsheet_body = deepcopy(SPREADSHEET_BODY)
     spreadsheet_body["properties"]["title"] = spreadsheet_body[
         "properties"
     ]["title"].format(date=now_dt)
@@ -88,14 +87,15 @@ async def spreadsheets_update_value(
     sheet_dims = sheet_data["sheets"][0]["properties"]["gridProperties"]
     update_dims = dict(
         rowCount=len(table_values),
-        columnCount=max([len(row) for row in table_values])
+        columnCount=max(len(row) for row in table_values)
     )
     for dim, value in update_dims.items():
         if value > sheet_dims[dim]:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=("Данные отчета не помещаются на листе ")
-            )
+            dim_name = "строк" if dim == "rowCount" else "колонок"
+            raise ValueError("Данные отчета не помещаются на листе. "
+                             f"{dim_name.capitalize()} отчета больше "
+                             f"{dim_name} листа. "
+                             f"{value} > {sheet_dims[dim]}")
     update_body = dict(
         majorDimension="ROWS",
         values=table_values
@@ -108,8 +108,3 @@ async def spreadsheets_update_value(
             json=update_body
         )
     )
-    for _ in TABLE_HEADER:
-        table_values.pop(0)
-    keys = ["name", "open_duration", "description"]
-    table_values = [dict(zip(keys, item)) for item in table_values]
-    return table_values
